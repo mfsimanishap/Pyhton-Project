@@ -1,0 +1,28 @@
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: tax-calculator-api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_PATH: /app/data/tax_calculator.db
+    volumes:
+      - tax-calculator-data:/app/data
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    container_name: tax-calculator-ui
+    ports:
+      - "8501:8501"
+    environment:
+      API_URL: http://backend:8000
+    depends_on:
+      - backend
+
+volumes:
+  tax-calculator-data:
