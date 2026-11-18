@@ -1,8 +1,12 @@
 """Authentication endpoints for registration and login."""
 
+from typing import Annotated
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 
+from app.core.dependencies import get_current_user
+from app.core.token import create_access_token
 from app.database.dependencies import get_db
 from app.models.user import User
 from app.schemas.auth import (
@@ -12,9 +16,6 @@ from app.schemas.auth import (
     UserResponse,
 )
 from app.services.auth_service import authenticate_user, create_user
-from app.core.token import create_access_token
-
-from app.core.dependencies import get_current_user
 
 router = APIRouter(
     prefix="/auth",
@@ -29,7 +30,7 @@ router = APIRouter(
 )
 def register_user(
     user_data: UserCreate,
-    db: Session = Depends(get_db),
+    db: Annotated[Session, Depends(get_db)],
 ) -> UserResponse:
     """Register a user account.
 
@@ -60,7 +61,7 @@ def register_user(
 )
 def login_user(
     login_data: UserLogin,
-    db: Session = Depends(get_db),
+    db: Annotated[Session, Depends(get_db)],
 ) -> TokenResponse:
     """Authenticate a user and return an access token.
 
@@ -99,7 +100,7 @@ def login_user(
     response_model=UserResponse,
 )
 def get_logged_in_user(
-    current_user: User = Depends(get_current_user),
+    current_user: Annotated[User, Depends(get_current_user)],
 ) -> UserResponse:
     """Return the public profile of the authenticated user.
 

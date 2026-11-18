@@ -9,6 +9,10 @@ services:
       - "8000:8000"
     environment:
       DATABASE_PATH: /app/data/tax_calculator.db
+      SECRET_KEY: ${SECRET_KEY:-development-secret-key-change-this-before-production}
+      ALGORITHM: ${ALGORITHM:-HS256}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-30}
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
     volumes:
       - tax-calculator-data:/app/data
 

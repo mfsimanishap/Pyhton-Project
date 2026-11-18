@@ -33,9 +33,11 @@ class DeductionService:
             ValueError: If ``tax_regime`` is not supported.
         """
 
-        deduction = STANDARD_DEDUCTION.get(tax_regime)
-
-        if deduction is None:
+        if tax_regime == "old":
+            deduction = STANDARD_DEDUCTION.old
+        elif tax_regime == "new":
+            deduction = STANDARD_DEDUCTION.new
+        else:
             raise ValueError("Invalid tax regime")
 
         return {

@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from app.database.connection import SessionLocal
 
 
-def get_db() -> Generator[Session, None, None]:
+def get_db() -> Generator[Session]:
     """Yield a database session and close it after the request.
 
     Yields:

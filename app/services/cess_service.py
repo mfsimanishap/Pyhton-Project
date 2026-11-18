@@ -1,5 +1,6 @@
 """Service for calculating health and education cess."""
 
+
 class CessService:
     """Calculate cess on income tax."""
 

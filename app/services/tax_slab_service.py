@@ -21,9 +21,11 @@ class TaxSlabService:
         Raises:
             ValueError: If ``tax_regime`` is not supported.
         """
-        slabs = TAX_SLABS.get(tax_regime)
-
-        if slabs is None:
+        if tax_regime == "old":
+            slabs = TAX_SLABS.old
+        elif tax_regime == "new":
+            slabs = TAX_SLABS.new
+        else:
             raise ValueError("Invalid tax regime")
 
         previous_limit: float = 0.0

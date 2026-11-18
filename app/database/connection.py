@@ -1,13 +1,9 @@
 """Database engine and session factory configuration."""
 
-from pathlib import Path
-
 from sqlalchemy import URL, create_engine
 from sqlalchemy.orm import sessionmaker
 
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
-
-DATABASE_PATH = PROJECT_ROOT / "tax_calculator.db"
+from app.config.env_config import DATABASE_PATH
 
 DATABASE_URL = URL.create(
     drivername="sqlite",

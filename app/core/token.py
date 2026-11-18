@@ -1,6 +1,6 @@
 """JWT access-token creation helpers."""
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import jwt
 
@@ -22,9 +22,7 @@ def create_access_token(
     Returns:
         A signed JWT containing the user identifier and expiry time.
     """
-    expires_at = datetime.now(timezone.utc) + timedelta(
-        minutes=ACCESS_TOKEN_EXPIRE_MINUTES
-    )
+    expires_at = datetime.now(UTC) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
 
     payload = {
         "sub": str(user_id),

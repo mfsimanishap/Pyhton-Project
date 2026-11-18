@@ -6,8 +6,6 @@ from alembic import context
 
 from app.database.base import Base
 from app.database.connection import engine
-from app.models.user import User
-from app.models.tax_calculation import TaxCalculation
 
 config = context.config
 

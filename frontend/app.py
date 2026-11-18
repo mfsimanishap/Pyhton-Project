@@ -2,10 +2,10 @@
 
 import json
 import os
-
-import streamlit as st
 from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
+
+import streamlit as st
 
 API_URL = os.getenv(
     "API_URL",
@@ -143,7 +143,7 @@ def api_request(
         st.error(f"API Error ({error.code}): {message}")
 
     except URLError:
-        st.error("Cannot connect to FastAPI. " "Check whether the backend is running.")
+        st.error("Cannot connect to FastAPI. Check whether the backend is running.")
 
     except TimeoutError:
         st.error("The API request timed out.")
@@ -160,11 +160,9 @@ def show_authentication():
     login_tab, register_tab = st.tabs(["Login", "Register"])
 
     with login_tab:
-
         st.subheader("Welcome Back")
 
         with st.form("login_form"):
-
             email = st.text_input(
                 "Email Address",
                 key="login_email",
@@ -182,12 +180,10 @@ def show_authentication():
             )
 
             if submitted:
-
                 if not email.strip() or not password:
                     st.error("Please enter your email and password.")
 
                 else:
-
                     result = api_request(
                         "/auth/login",
                         method="POST",
@@ -198,7 +194,6 @@ def show_authentication():
                     )
 
                     if result and result.get("access_token"):
-
                         st.session_state.token = result["access_token"]
 
                         user = api_request(
@@ -218,11 +213,9 @@ def show_authentication():
                             st.session_state.user = None
 
     with register_tab:
-
         st.subheader("Create an Account")
 
         with st.form("register_form"):
-
             name = st.text_input(
                 "Full Name",
                 key="register_name",
@@ -251,7 +244,6 @@ def show_authentication():
             )
 
             if submitted:
-
                 if not name.strip():
                     st.error("Please enter your name.")
 
@@ -268,7 +260,6 @@ def show_authentication():
                     st.error("Passwords do not match.")
 
                 else:
-
                     result = api_request(
                         "/auth/register",
                         method="POST",
@@ -341,7 +332,6 @@ def show_slab_breakdown(result):
     slab_data = []
 
     for slab in slab_breakdown:
-
         slab_data.append(
             {
                 "Tax Rate": slab.get("slab_rate", "0%"),
@@ -414,7 +404,7 @@ def show_comparison_table(old_tax, new_tax):
     st.table(comparison_data)
 
     st.markdown(
-        '<div class="total-tax-row">' "<h4>💰 TOTAL TAX COMPARISON</h4>" "</div>",
+        '<div class="total-tax-row"><h4>💰 TOTAL TAX COMPARISON</h4></div>',
         unsafe_allow_html=True,
     )
 
@@ -424,14 +414,12 @@ def show_comparison_table(old_tax, new_tax):
     new_total = new_tax.get("total_tax", 0)
 
     with col1:
-
         st.metric(
             "Old Regime - Total Tax",
             format_inr(old_total),
         )
 
     with col2:
-
         st.metric(
             "New Regime - Total Tax",
             format_inr(new_total),
@@ -444,7 +432,6 @@ def show_comparison_table(old_tax, new_tax):
 
 
 if not st.session_state.token:
-
     show_authentication()
 
     st.stop()
@@ -479,7 +466,6 @@ if st.sidebar.button(
     "Logout",
     use_container_width=True,
 ):
-
     st.session_state.token = None
     st.session_state.user = None
 
@@ -494,7 +480,6 @@ st.sidebar.caption("Income Tax Calculator")
 
 
 if page == "🏠 Dashboard":
-
     st.title("Income Tax Dashboard")
 
     st.write("Manage your details and compare income tax regimes.")
@@ -508,21 +493,18 @@ if page == "🏠 Dashboard":
     col1, col2, col3 = st.columns(3)
 
     with col1:
-
         st.metric(
             "Taxpayer",
             taxpayer.get("name", "Not added"),
         )
 
     with col2:
-
         st.metric(
             "Gross Annual Salary",
             format_inr(gross_salary),
         )
 
     with col3:
-
         st.metric(
             "80C Investments",
             format_inr(deductions.get("deduction_80c", 0)),
@@ -539,7 +521,6 @@ if page == "🏠 Dashboard":
     )
 
     if st.session_state.tax_result:
-
         st.divider()
 
         st.subheader("Latest Tax Calculation")
@@ -551,21 +532,18 @@ if page == "🏠 Dashboard":
         recommended_regime = comparison.get("recommended_regime")
 
         if recommended_regime == "old":
-
             st.metric(
                 "Recommended Regime",
                 "Old Tax Regime",
             )
 
         elif recommended_regime == "new":
-
             st.metric(
                 "Recommended Regime",
                 "New Tax Regime",
             )
 
         elif recommended_regime == "both":
-
             st.metric(
                 "Recommended Regime",
                 "Both Regimes",
@@ -573,7 +551,6 @@ if page == "🏠 Dashboard":
 
 
 elif page == "👤 Taxpayer Details":
-
     st.title("Taxpayer Details")
 
     st.write("Enter your personal details.")
@@ -581,7 +558,6 @@ elif page == "👤 Taxpayer Details":
     saved = st.session_state.taxpayer
 
     with st.form("taxpayer_form"):
-
         name = st.text_input(
             "Full Name",
             value=saved.get("name", ""),
@@ -621,25 +597,19 @@ elif page == "👤 Taxpayer Details":
         submitted = st.form_submit_button("Save Taxpayer Details")
 
         if submitted:
-
             if not name.strip():
-
                 st.error("Please enter the taxpayer name.")
 
             elif len(name.strip()) < 2:
-
                 st.error("Name must contain at least 2 characters.")
 
             elif age <= 0:
-
                 st.error("Age must be greater than zero.")
 
             elif age >= 120:
-
                 st.error("Please enter a valid age below 120.")
 
             else:
-
                 regime_values = {
                     "Compare Both": None,
                     "Old Regime": "old",
@@ -659,7 +629,6 @@ elif page == "👤 Taxpayer Details":
     saved = st.session_state.taxpayer
 
     if saved:
-
         st.divider()
 
         st.subheader("Saved Details")
@@ -668,11 +637,10 @@ elif page == "👤 Taxpayer Details":
 
         st.write(f"**Age:** {saved.get('age', '')}")
 
-        st.write("**Regime:** " f"{saved.get('tax_regime') or 'Compare Both'}")
+        st.write(f"**Regime:** {saved.get('tax_regime') or 'Compare Both'}")
 
 
 elif page == "💵 Salary Details":
-
     st.title("Salary Details")
 
     st.write("Enter your annual salary components.")
@@ -680,11 +648,9 @@ elif page == "💵 Salary Details":
     saved = st.session_state.salary
 
     with st.form("salary_form"):
-
         col1, col2 = st.columns(2)
 
         with col1:
-
             basic_salary = st.number_input(
                 "Basic Salary (₹)",
                 min_value=0.0,
@@ -700,7 +666,6 @@ elif page == "💵 Salary Details":
             )
 
         with col2:
-
             special_allowance = st.number_input(
                 "Special Allowance (₹)",
                 min_value=0.0,
@@ -718,13 +683,10 @@ elif page == "💵 Salary Details":
         submitted = st.form_submit_button("Save Salary Details")
 
         if submitted:
-
             if basic_salary == 0 and hra == 0 and special_allowance == 0 and bonus == 0:
-
                 st.error("Please enter at least one salary component.")
 
             else:
-
                 st.session_state.salary = {
                     "basic_salary": basic_salary,
                     "hra": hra,
@@ -739,7 +701,6 @@ elif page == "💵 Salary Details":
     saved = st.session_state.salary
 
     if saved:
-
         st.divider()
 
         gross_salary = sum(saved.values())
@@ -751,7 +712,6 @@ elif page == "💵 Salary Details":
 
 
 elif page == "📋 Deductions":
-
     st.title("Deductions")
 
     st.write("Enter your eligible deductions.")
@@ -759,11 +719,9 @@ elif page == "📋 Deductions":
     saved = st.session_state.deductions
 
     with st.form("deductions_form"):
-
         col1, col2 = st.columns(2)
 
         with col1:
-
             annual_rent = st.number_input(
                 "Annual Rent Paid (₹)",
                 min_value=0.0,
@@ -772,7 +730,6 @@ elif page == "📋 Deductions":
             )
 
         with col2:
-
             deduction_80c = st.number_input(
                 "80C Investments (₹)",
                 min_value=0.0,
@@ -783,13 +740,10 @@ elif page == "📋 Deductions":
         submitted = st.form_submit_button("Save Deduction Details")
 
         if submitted:
-
             if deduction_80c > 150000:
-
                 st.error("80C investments cannot exceed ₹1,50,000.")
 
             else:
-
                 st.session_state.deductions = {
                     "annual_rent": annual_rent,
                     "deduction_80c": deduction_80c,
@@ -802,7 +756,6 @@ elif page == "📋 Deductions":
     saved = st.session_state.deductions
 
     if saved:
-
         st.divider()
 
         st.metric(
@@ -812,7 +765,6 @@ elif page == "📋 Deductions":
 
 
 elif page == "📊 Tax Calculation":
-
     st.title("📊 Tax Calculation")
 
     taxpayer = st.session_state.taxpayer
@@ -822,31 +774,25 @@ elif page == "📊 Tax Calculation":
     selected_regime = taxpayer.get("tax_regime")
 
     if not taxpayer or not salary or not deductions:
-
         st.warning(
             "Please complete Taxpayer Details, Salary Details, "
             "and Deductions before calculating tax."
         )
 
     else:
-
         if selected_regime is None:
-
             st.write("Compare your income tax under both regimes.")
 
         elif selected_regime == "old":
-
             st.write("Calculate your income tax under the Old Regime.")
 
         else:
-
             st.write("Calculate your income tax under the New Regime.")
 
         if st.button(
             "Calculate Income Tax",
             use_container_width=True,
         ):
-
             payload = {
                 "basic_salary": salary["basic_salary"],
                 "hra_received": salary["hra"],
@@ -858,21 +804,17 @@ elif page == "📊 Tax Calculation":
             }
 
             with st.spinner("Calculating income tax..."):
-
                 result = calculate_tax(payload)
 
             if result:
-
                 st.session_state.tax_result = result
 
         result = st.session_state.tax_result
 
         if result:
-
             st.success("Tax calculation completed successfully!")
 
             if "comparison" in result:
-
                 comparison = result["comparison"]
 
                 old_tax = comparison.get(
@@ -897,15 +839,12 @@ elif page == "📊 Tax Calculation":
                 st.subheader("Recommended Tax Regime")
 
                 if recommended_regime == "old":
-
                     st.success("Recommended Regime: Old Tax Regime")
 
                 elif recommended_regime == "new":
-
                     st.success("Recommended Regime: New Tax Regime")
 
                 elif recommended_regime == "both":
-
                     st.info("Both tax regimes result in the same tax.")
 
                 tax_saving = comparison.get(
@@ -923,31 +862,25 @@ elif page == "📊 Tax Calculation":
                 tab_old, tab_new = st.tabs(["Old Regime", "New Regime"])
 
                 with tab_old:
-
                     st.write("Old Regime Slab Details")
 
                     show_slab_breakdown(old_tax)
 
                 with tab_new:
-
                     st.write("New Regime Slab Details")
 
                     show_slab_breakdown(new_tax)
 
             else:
-
                 tax_regime = result.get("tax_regime")
 
                 if tax_regime == "old":
-
                     st.subheader("Old Tax Regime Result")
 
                 elif tax_regime == "new":
-
                     st.subheader("New Tax Regime Result")
 
                 else:
-
                     st.error("Unknown tax regime in API response.")
 
                     st.stop()
@@ -955,7 +888,6 @@ elif page == "📊 Tax Calculation":
                 col1, col2 = st.columns(2)
 
                 with col1:
-
                     st.metric(
                         "Gross Salary",
                         format_inr(result.get("gross_salary", 0)),
@@ -967,7 +899,6 @@ elif page == "📊 Tax Calculation":
                     )
 
                 with col2:
-
                     st.metric(
                         "Income Tax",
                         format_inr(result.get("tax_before_cess", 0)),
@@ -991,7 +922,6 @@ elif page == "📊 Tax Calculation":
 
 
 elif page == "📜 Tax History":
-
     st.title("📜 Tax Calculation History")
 
     st.write("View your previously saved tax calculations.")
@@ -1008,17 +938,13 @@ elif page == "📜 Tax History":
     )
 
     if history is not None:
-
         if not history:
-
             st.info("You haven't saved any tax calculations yet.")
 
         else:
-
             st.success(f"{len(history)} calculation(s) found.")
 
             for calculation in history:
-
                 calculation_id = calculation.get("id")
 
                 created_at = calculation.get(
@@ -1036,8 +962,7 @@ elif page == "📜 Tax History":
                     {},
                 )
 
-                with st.expander(f"Calculation #{calculation_id} — " f"{created_at}"):
-
+                with st.expander(f"Calculation #{calculation_id} — {created_at}"):
                     st.write(
                         "**Tax Regime:** "
                         f"{request_data.get('tax_regime') or 'Compare Both'}"
@@ -1049,7 +974,6 @@ elif page == "📜 Tax History":
                     )
 
                     if "comparison" in result:
-
                         comparison = result["comparison"]
 
                         old_tax = comparison.get(
@@ -1065,14 +989,12 @@ elif page == "📜 Tax History":
                         col1, col2 = st.columns(2)
 
                         with col1:
-
                             st.metric(
                                 "Old Regime Total Tax",
                                 format_inr(old_tax.get("total_tax", 0)),
                             )
 
                         with col2:
-
                             st.metric(
                                 "New Regime Total Tax",
                                 format_inr(new_tax.get("total_tax", 0)),
@@ -1084,12 +1006,10 @@ elif page == "📜 Tax History":
                         )
 
                     else:
-
                         st.metric(
                             "Total Tax",
                             format_inr(result.get("total_tax", 0)),
                         )
 
                     with st.popover("View Full Calculation"):
-
                         st.json(result)

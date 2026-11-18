@@ -1,12 +1,9 @@
-"""Authentication and application configuration values."""
+"""Backward-compatible imports for application environment settings."""
 
-import os
-
-SECRET_KEY = os.getenv(
-    "SECRET_KEY",
-    "development-secret-key-change-this-before-production",
+from app.config.env_config import (
+    ACCESS_TOKEN_EXPIRE_MINUTES,
+    ALGORITHM,
+    SECRET_KEY,
 )
 
-ALGORITHM = "HS256"
-
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+__all__ = ["ACCESS_TOKEN_EXPIRE_MINUTES", "ALGORITHM", "SECRET_KEY"]

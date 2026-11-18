@@ -1,6 +1,15 @@
-"""Standard deduction amounts for each supported tax regime."""
+"""Validated standard deduction amounts for supported tax regimes."""
 
-STANDARD_DEDUCTION = {
-    "old": 50000,
-    "new": 75000,
-}
+from pydantic import BaseModel, ConfigDict
+
+
+class StandardDeductionConstants(BaseModel):
+    """Standard deduction amounts for the old and new tax regimes."""
+
+    model_config = ConfigDict(frozen=True)
+
+    old: float = 50000
+    new: float = 75000
+
+
+STANDARD_DEDUCTION = StandardDeductionConstants()

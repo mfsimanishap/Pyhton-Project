@@ -1,5 +1,7 @@
 """FastAPI dependencies for authenticated requests."""
 
+from typing import Annotated
+
 import jwt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -14,8 +16,8 @@ oauth2_scheme = HTTPBearer()
 
 
 def get_current_user(
-    credentials: HTTPAuthorizationCredentials = Depends(oauth2_scheme),
-    db: Session = Depends(get_db),
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(oauth2_scheme)],
+    db: Annotated[Session, Depends(get_db)],
 ) -> User:
     """Resolve the authenticated user from a bearer token.
 
@@ -49,7 +51,7 @@ def get_current_user(
 
         parsed_user_id = int(user_id)
 
-    except (InvalidTokenError, ValueError, TypeError):
+    except InvalidTokenError, ValueError, TypeError:
         raise credentials_exception from None
 
     user = db.get(User, parsed_user_id)

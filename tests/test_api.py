@@ -1,10 +1,82 @@
 """API integration tests for tax calculation and taxpayer endpoints."""
 
-from fastapi.testclient import TestClient
+from collections.abc import Generator
 
+import pytest
+from fastapi.testclient import TestClient
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.pool import StaticPool
+
+from app.core.token import create_access_token
+from app.database.dependencies import get_db
 from app.main import app
+from app.models.tax_calculation import TaxCalculation
+from app.models.user import User
 
 client = TestClient(app)
+
+
+@pytest.fixture(autouse=True)
+def authenticated_test_client() -> Generator[None]:
+    """Provide an isolated database and a valid user token for each test."""
+    engine = create_engine(
+        "sqlite://",
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    TaxCalculation.metadata.create_all(engine)
+    test_session_factory = sessionmaker(
+        bind=engine,
+        autoflush=False,
+        autocommit=False,
+    )
+
+    with test_session_factory() as db:
+        user = User(
+            name="API Test User",
+            email="api-test@example.com",
+            hashed_password="not-used",
+        )
+        db.add(user)
+        db.commit()
+        access_token = create_access_token(user.id)
+
+    def override_get_db() -> Generator[Session]:
+        with test_session_factory() as db:
+            yield db
+
+    previous_overrides = app.dependency_overrides.copy()
+    app.dependency_overrides[get_db] = override_get_db
+    client.headers["Authorization"] = f"Bearer {access_token}"
+
+    try:
+        yield
+    finally:
+        client.headers.pop("Authorization", None)
+        app.dependency_overrides.clear()
+        app.dependency_overrides.update(previous_overrides)
+        engine.dispose()
+
+
+def test_calculate_tax_requires_authentication() -> None:
+    """Reject tax calculation requests without a bearer token."""
+    unauthenticated_client = TestClient(app)
+
+    response = unauthenticated_client.post(
+        "/tax/calculate",
+        json={
+            "tax_regime": "old",
+            "basic_salary": 600000,
+            "hra_received": 240000,
+            "special_allowance": 160000,
+            "bonus": 100000,
+            "rent_paid": 180000,
+            "eligible_investments": 100000,
+        },
+    )
+
+    assert response.status_code == 401
 
 
 def test_calculate_tax_endpoint():
