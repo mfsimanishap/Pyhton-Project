@@ -85,6 +85,7 @@ tax-calculator/
 ├── requirements.txt
 ├── pyproject.toml
 ├── alembic.ini
+├── starter.py
 └── README.md
 ```
 
@@ -138,6 +139,7 @@ DATABASE_PATH=tax_calculator.db
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=30
 LOG_LEVEL=INFO
+DUMMY_DATA_ENABLED=false
 ```
 
 Use a strong, randomly generated secret key. Do not commit `.env` files to version control.
@@ -150,10 +152,12 @@ The application writes logs to the console. Set `LOG_LEVEL` to `DEBUG`, `INFO`,
 alembic upgrade head
 ```
 
-### 7. Start the FastAPI Backend
+### 7. Start the Application
+
+Use the starter script to apply database migrations and launch both services:
 
 ```powershell
-uvicorn app.main:app --reload
+python starter.py --reload
 ```
 
 Backend URL:
@@ -166,14 +170,6 @@ API documentation:
 
 ```text
 http://127.0.0.1:8000/docs
-```
-
-### 8. Start the Streamlit Frontend
-
-Open another terminal, activate the virtual environment, and execute:
-
-```powershell
-streamlit run frontend/app.py
 ```
 
 Frontend URL:

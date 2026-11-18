@@ -25,3 +25,10 @@ DATABASE_PATH = (
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO").upper()
 if LOG_LEVEL not in {"CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"}:
     raise ValueError(f"Invalid LOG_LEVEL: {LOG_LEVEL}")
+
+DUMMY_DATA_ENABLED = os.getenv("DUMMY_DATA_ENABLED", "false").lower() in {
+    "1",
+    "true",
+    "yes",
+    "on",
+}
